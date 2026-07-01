@@ -1,0 +1,19 @@
+# Dependencies
+node_modules/
+
+# Environment variables (keep secrets safe)
+.env
+*.env
+
+# Large binary/media files
+backend/raw_images/
+backend/thumbnails/
+backend/thumbnails.zip
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

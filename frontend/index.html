@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page_title">Lễ Thành Hôn - Công Minh & Vân Anh</title>
+    
+    <style id="gate-style">body { visibility: hidden !important; }</style>
+    <script>
+        const _showAccessDenied = () => {
+            window.stop();
+            document.documentElement.innerHTML = `
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Truy cập bị từ chối</title>
+                    <style>
+                        body { display: flex !important; visibility: visible !important; justify-content: center; align-items: center; height: 100vh; background-color: #fdfaf6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; color: #333; text-align: center; padding: 20px; }
+                        .error-container { max-width: 500px; padding: 40px; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #f0e9e1; }
+                        h1 { color: #8a6d4b; margin-top: 0; font-weight: 600; font-size: 24px; }
+                        p { font-size: 15px; line-height: 1.6; color: #666; margin-bottom: 0; }
+                    </style>
+                </head>
+                <body>
+                    <div class="error-container">
+                        <h1>Không Thể Truy Cập</h1>
+                        <p>Đường dẫn bạn nhập không hợp lệ hoặc khách mời này không có trong danh sách. Vui lòng sử dụng đúng đường link đã được Cô dâu Chú rể gửi tặng để vào trang.</p>
+                    </div>
+                </body>
+            `;
+        };
+
+        const _revealPage = () => {
+            const gateStyle = document.getElementById('gate-style');
+            if (gateStyle) gateStyle.remove();
+        };
+
+        (async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const guestname = urlParams.get('guestname');
+
+            // Step 1: Check parameter exists (synchronous)
+            if (!guestname || guestname.trim() === '') {
+                _showAccessDenied();
+                return;
+            }
+
+            // Step 2: Validate against invite list on server (async)
+            try {
+                const res = await fetch(`/api/dashboard/validate/${encodeURIComponent(guestname.trim())}`);
+                const data = await res.json();
+                if (!data.valid) {
+                    _showAccessDenied();
+                    return;
+                }
+            } catch (e) {
+                // If server unreachable, allow through to avoid blocking real guests
+                console.warn('Could not validate guest, allowing through:', e);
+            }
+
+            // Validation passed - reveal the page
+            _revealPage();
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&family=Birthstone&family=Cookie&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+
+    <!-- Scroll Progress Bar -->
+    <div id="scroll-progress"></div>
+
+    <!-- Auto-scroll hint -->
+    <div id="autoscroll-hint"><span class="hint-line"></span><span data-i18n="scroll_to_explore">Cuộn để khám phá</span><span class="hint-line"></span></div>
+
+    <!-- Cinematic Particles Background -->
+    <div id="particles-bg"></div>
+
+    <!-- Language Toggle -->
+    <div id="lang-controls" class="lang-controls">
+        <button id="lang-vi" class="lang-btn active">VN</button>
+        <span class="lang-divider">|</span>
+        <button id="lang-en" class="lang-btn">EN</button>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bg-music" loop>
+        <source src="assets/audio/a-thousand-years-piano.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- UI Controls (Music) -->
+    <div id="controls" class="ui-controls hidden">
+        <button id="music-toggle" class="control-btn" title="Phát nhạc">
+            <svg id="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg id="icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="icon hidden"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>
+        </button>
+    </div>
+
+    <!-- DOT NAVIGATION (right side) -->
+    <nav id="dot-nav" class="dot-nav hidden">
+        <a class="dot-item" data-section="hero-section"><span class="dot-label" data-i18n="nav_home">Trang Chủ</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="gallery-section"><span class="dot-label" data-i18n="nav_gallery">Khoảnh Khắc</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="baohy-section"><span class="dot-label" data-i18n="nav_baohy">Báo Hỷ</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="timeline-section"><span class="dot-label" data-i18n="nav_timeline">Chương Trình</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="interactive-cards-section"><span class="dot-label" data-i18n="nav_card">Thiệp Cưới</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="location-section"><span class="dot-label" data-i18n="nav_location">Địa Điểm</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="news-section"><span class="dot-label" data-i18n="nav_news">Cập Nhật</span><span class="dot"></span></a>
+        <a class="dot-item" data-section="rsvp-section"><span class="dot-label" data-i18n="nav_rsvp">Phúc Đáp</span><span class="dot"></span></a>
+    </nav>
+
+
+    <div id="live-wishes-container" class="live-wishes-container hidden">
+        <div class="live-wishes-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <span data-i18n="ticker_header">Lời chúc từ khách mời</span>
+            <button id="close-wishes-btn" style="background: transparent; border: none; font-size: 1.5rem; color: var(--color-text-dim); cursor: pointer; padding: 0 5px; line-height: 1;">&times;</button>
+        </div>
+        <div class="live-wishes-scroll" id="live-wishes-scroll">
+            <div class="wish-item" data-i18n="ticker_loading">Đang tải lời chúc...</div>
+        </div>
+    </div>
+    <!-- Toast -->
+    <div id="toast" class="toast hidden">Thành công!</div>
+
+    <!-- Intro CSS animations -->
+    <style>
+        #splash-screen { position: fixed; top:0; left:0; width:100%; height:100%; z-index:1000; overflow:hidden; cursor:pointer; background: radial-gradient(ellipse 90% 70% at 50% 45%, #ffffff 0%, #FCF9F2 100%); }
+        #bokeh-canvas  { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+        .intro-wrap    { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; pointer-events:none; }
+
+        /* Staggered fade-up animations */
+        @keyframes fadeUp { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes scaleIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+        @keyframes drawLine { from { width:0; } to { width: min(480px,58vw); } }
+        @keyframes ctaBlink { 0%,100% { opacity:0.35; letter-spacing:5px; } 50% { opacity:0.8; letter-spacing:6px; } }
+
+        .i-tag   { font-family:'Lato',sans-serif; font-size:.68rem; letter-spacing:8px; text-transform:uppercase; color:#688f43; animation: fadeUp .9s ease both; animation-delay:.3s; margin-bottom:18px; }
+        .i-kgui  { font-family:'Lato',sans-serif; font-size:.6rem; letter-spacing:5px; color:rgba(0,0,0,.4); text-transform:uppercase; margin-bottom:8px; animation: fadeUp .8s ease both; animation-delay:.7s; }
+        .i-name  { font-family:'Playfair Display',serif; font-size:clamp(2rem,5vw,3rem); color:#688f43; font-style:italic; font-weight:400; animation: fadeUp 1s ease both; animation-delay:.9s; text-shadow:0 0 20px rgba(104, 143, 67,.2); }
+        .i-sep   { color:#688f43; font-size:1.1rem; letter-spacing:14px; margin:24px 0 20px; animation: scaleIn .7s ease both; animation-delay:1.3s; }
+        .i-names { font-family:'Birthstone',cursive; font-size:clamp(4rem,9vw,7rem); color:#688f43; font-weight:400; margin:0; line-height:1; animation: fadeUp 1.1s ease both; animation-delay:1.5s; text-shadow:0 4px 20px rgba(0,0,0,.08); }
+        .i-event { font-family:'Lato',sans-serif; font-size:.78rem; letter-spacing:10px; text-transform:uppercase; color:rgba(0,0,0,.45); margin-top:18px; animation: fadeUp .8s ease both; animation-delay:2s; }
+        .i-date  { font-family:'Playfair Display',serif; font-size:clamp(.95rem,2vw,1.2rem); color:#688f43; letter-spacing:5px; margin-top:6px; animation: fadeUp .8s ease both; animation-delay:2.2s; }
+        .i-line  { height:1px; background:linear-gradient(90deg,transparent,#688f43 40%,#688f43 60%,transparent); animation: drawLine 1.2s ease both; animation-delay:.1s; }
+        .i-line2 { animation-delay:.2s; }
+        .i-cta   { font-family:'Lato',sans-serif; font-size:.62rem; letter-spacing:5px; text-transform:uppercase; color:rgba(0,0,0,.45); display:flex; align-items:center; gap:14px; margin-top:48px; animation: fadeUp .8s ease both, ctaBlink 2.8s ease-in-out 3s infinite; animation-delay:.1s,3s; }
+        .i-cta span.ln { display:inline-block; width:28px; height:1px; background:rgba(0,0,0,.2); }
+    </style>
+
+    <!-- Flash Overlay -->
+    <div id="flash-overlay" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:9997;background:#fff;opacity:0;pointer-events:none;transition:opacity .6s ease;"></div>
+
+    <!-- CINEMATIC INTRO SCREEN -->
+    <div id="splash-screen">
+        <canvas id="bokeh-canvas"></canvas>
+
+        <!-- Gold deco lines -->
+        <div class="i-line" style="position:absolute;top:16%;left:50%;transform:translateX(-50%);"></div>
+        <div class="i-line i-line2" style="position:absolute;bottom:16%;left:50%;transform:translateX(-50%);"></div>
+
+        <!-- Main content -->
+        <div class="intro-wrap">
+            <div class="i-tag" data-i18n="cordially_invited">Trân trọng kính mời</div>
+            <div class="i-kgui" data-i18n="dear_guest">Kính gửi</div>
+            <div class="i-name" id="intro-guest-name">Quý Khách</div>
+            <div class="i-sep">✦ ✦ ✦</div>
+            <h1 class="i-names" data-i18n="couple_names">Công Minh &amp; Vân Anh</h1>
+            <div class="i-event" data-i18n="wedding_title">Lễ Thành Hôn</div>
+            <div class="i-date" data-i18n="date_text">18:00 · Chủ Nhật · 18/10/2026</div>
+            <div class="i-cta"><span class="ln"></span><span data-i18n="click_to_start">Nhấn để bắt đầu</span><span class="ln"></span></div>
+        </div>
+    </div>
+
+    <!-- Main Scrollable Portfolio -->
+    <div id="main-portfolio" style="display: none; opacity: 0; transition: opacity 1s ease; width: 100%; min-height: 100vh;">
+
+        
+        <!-- Hero Section -->
+        <section id="hero-section" style="position: relative; width: 100%; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div class="hero-bg" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: -1;">
+                <img src="./gallery/HayesStudio_0021.JPG" alt="Hero" style="width: 100%; height: 100%; object-fit: cover; filter: brightness(0.5);">
+            </div>
+
+            <div style="position:relative; z-index:1; text-align:center; padding: 0 20px;">
+                <div style="height:1px; width:min(280px,50vw); background: linear-gradient(90deg,transparent,rgba(104, 143, 67,0.5) 40%,rgba(104, 143, 67,0.5) 60%,transparent); margin: 0 auto 28px;"></div>
+                <p style="color: var(--color-gold); font-family: var(--font-body); letter-spacing: 10px; margin-bottom: 18px; font-size: 0.65rem; text-transform: uppercase; opacity: 0.9;" data-i18n="wedding_title">Lễ Thành Hôn</p>
+                <h1 style="font-family: var(--font-script); color: var(--color-gold); font-size: clamp(3.5rem, 9vw, 7.5rem); letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.05); margin: 0; line-height: 1; font-weight: 400;" data-i18n="couple_names">Công Minh &amp; Vân Anh</h1>
+                <div style="height:1px; width:min(280px,50vw); background: linear-gradient(90deg,transparent,rgba(104, 143, 67, 0.5) 40%,rgba(104, 143, 67, 0.5) 60%,transparent); margin: 28px auto 20px;"></div>
+                <p style="color: rgba(61, 51, 41, 0.7); font-family: var(--font-body); letter-spacing: 5px; font-size: 0.75rem;" data-i18n="date_text">18:00 · Chủ Nhật · 18/10/2026</p>
+            </div>
+
+            <div class="scroll-indicator" style="position: absolute; bottom: 50px; color: rgba(61, 51, 41, 0.5); text-align: center; font-size: 0.65rem; letter-spacing: 4px; text-transform: uppercase; z-index:1;">
+                <span style="display: block; margin-bottom: 10px;" data-i18n="explore">Khám phá</span>
+                <i class="fas fa-chevron-down" style="animation: bounce 2s infinite; color: var(--color-gold);"></i>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery-section" style="padding: 100px 20px;">
+            <div class="reveal" style="text-align:center; margin-bottom: 60px;">
+                <div style="height:1px; background: var(--gold-line); max-width:300px; margin: 0 auto 40px;"></div>
+                <h2 class="luxury-section-title" data-i18n="nav_gallery">Khoảnh Khắc</h2>
+                <span class="luxury-section-ornament">✦ ✦ ✦</span>
+            </div>
+            <div id="masonry-gallery" style="column-count: 3; column-gap: 16px; max-width: 1200px; margin: 0 auto;">
+
+                <!-- Images injected via JS -->
+            </div>
+        </section>
+
+        <!-- Announcement Section -->
+        <section id="baohy-section" style="padding: 100px 20px; background: var(--color-bg2); display: flex; justify-content: center; align-items: center;">
+            <div class="reveal-scale" style="max-width: 600px; width: 100%; text-align: center;">
+                <div style="height:1px; background: var(--gold-line); max-width:300px; margin: 0 auto 40px;"></div>
+                <h2 class="luxury-section-title" data-i18n="nav_baohy">Báo Hỷ</h2>
+                <span class="luxury-section-ornament" style="margin-bottom: 40px;">✦ ✦ ✦</span>
+                <img src="assets/baohy.png" alt="Báo Hỷ" style="width: 100%; border-radius: 12px; box-shadow: var(--shadow-deep); object-fit: contain;">
+            </div>
+        </section>
+
+        <!-- Timeline Section -->
+        <section id="timeline-section" style="padding: 100px 20px; background: var(--color-bg); position: relative;">
+            <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+                <div style="height:1px; background: var(--gold-line); max-width:300px; margin: 0 auto 40px;"></div>
+                <h2 class="luxury-section-title" data-i18n="nav_timeline">Chương Trình</h2>
+                <span class="luxury-section-ornament" style="margin-bottom: 60px;">✦ ✦ ✦</span>
+                
+                <div class="timeline">
+                    <!-- Item 1 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">17:45</div>
+                            <div class="event-text" data-i18n="tl_1">Đón khách & Chụp hình</div>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">19:00</div>
+                            <div class="event-text" data-i18n="tl_2">Lễ cưới & Vows</div>
+                        </div>
+                    </div>
+                    <!-- Item 3 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">19:30</div>
+                            <div class="event-text" data-i18n="tl_3">Khai tiệc</div>
+                        </div>
+                    </div>
+                    <!-- Item 4 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">20:00</div>
+                            <div class="event-text" data-i18n="tl_4">Hát hò · Nhảy múa</div>
+                        </div>
+                    </div>
+                    <!-- Item 5 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">21:00</div>
+                            <div class="event-text" data-i18n="tl_5">Kế nhiệm hoa cưới ^^</div>
+                        </div>
+                    </div>
+                    <!-- Item 6 -->
+                    <div class="timeline-item reveal-scale">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="time-text">21:30</div>
+                            <div class="event-text" data-i18n="tl_6">Kết thúc tiệc</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Cards Section (Guestbook Only now) -->
+        <section id="interactive-cards-section" style="padding: 100px 0; position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+            <!-- VIP Parallax Background -->
+            <div style="position: absolute; top:0; left:0; width: 100%; height: 100%; background: url('./gallery/HayesStudio_0001.JPG') center/cover fixed; opacity: 0.08; z-index: -2;"></div>
+            <div style="position: absolute; top:0; left:0; width: 100%; height: 100%; background: linear-gradient(to bottom, var(--color-bg), transparent, var(--color-bg)); z-index: -1;"></div>
+
+    <!-- Lightbox Overlay -->
+    <div id="lightbox" class="lightbox hidden">
+        <div class="lightbox-close">✕</div>
+        <img id="lightbox-img" class="lightbox-img" src="" alt="Zoomed Photo">
+    </div>
+
+
+
+    <!-- Phase 3 & 4: Cards and Mailbox Container -->
+            <div id="cards-container" class="cards-container" style="position: static; width: 100%; max-width: 1200px; display: flex; flex-wrap: wrap; justify-content: space-around; gap: 50px; transform: none; height: auto !important; overflow: visible !important;">
+        
+        <!-- Card 1: Invite / RSVP (3D Flip Card) -->
+        <div class="card-scene" id="card-1-scene">
+            <div class="card-object" id="card-1">
+                <!-- Front: Invitation & Map -->
+                <div class="card-face card-front" style="background: transparent; border: none; padding: 0;">
+                    <div class="tilt-wrapper" data-tilt data-tilt-max="8" data-tilt-speed="1000" data-tilt-perspective="1000" data-tilt-glare="true" data-tilt-max-glare="0.3" style="width: 100%; height: 100%; position: relative; transform-style: preserve-3d; border-radius: 4px;">
+                        <div id="card-image-container" data-i18n="card_image" style="width: 100%; height: 100%; position: absolute; top:0; left:0; transform: translateZ(0px);">
+                            <img src="./assets/cards/card_vn.png" alt="Thiệp cưới" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+                        </div>
+                        <div class="card-actions" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%) translateZ(40px); display: flex; gap: 15px; z-index: 10; width: 90%; justify-content: center;">
+                            <!-- Removed RSVP button as requested -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2: Wish Form -->
+        <div class="card-scene" id="card-2-scene">
+            <div class="card-object" id="card-2">
+                <div class="card-face card-front" style="border: none; padding: 0;">
+                    <div class="tilt-wrapper" data-tilt data-tilt-max="6" data-tilt-speed="1000" data-tilt-perspective="1000" style="width: 100%; height: 100%; position: relative; transform-style: preserve-3d; border-radius: 4px;">
+                        <!-- Background image identical to front card -->
+                        <div id="guestbook-bg" data-i18n="card_image" style="position: absolute; top:0; left:0; width:100%; height:100%; z-index: 1; transform: translateZ(0px);">
+                            <img src="./assets/cards/card_vn.png" alt="Thiệp cưới" style="width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);">
+                        </div>
+                        <!-- Glassmorphism overlay panel pop-out -->
+                        <div class="glass-panel" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateZ(60px); width: 85%; height: 85%; background: rgba(255,255,255,0.5); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.8); display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 30px 20px; box-shadow: 0 30px 60px rgba(0,0,0,0.15); z-index: 2;">
+                            
+                            <h3 class="section-title" data-i18n="guestbook_title" style="margin-bottom: 10px; font-size: 1.8rem; color: var(--color-gold);">Sổ Lưu Bút</h3>
+                            <p class="invite-text text-center" data-i18n="guestbook_desc" style="font-size: 0.8rem; margin-bottom: 25px; color: #333; line-height: 1.5;">Hãy để lại lời chúc tốt đẹp nhất cho cô dâu và chú rể</p>
+                            
+                            <form id="wish-form" class="elegant-form w-100" style="display: flex; flex-direction: column; height: 100%; transform: translateZ(20px);">
+                                <div class="form-group" style="flex-grow: 1;">
+                                    <textarea id="wishMessage" name="message" placeholder="Viết lời chúc của bạn tại đây..." data-i18n-placeholder="wish_placeholder" required class="elegant-input" style="background: rgba(255,255,255,0.7); border: 1px solid rgba(30,63,90,0.2); border-radius: 12px; padding: 15px; width: 100%; height: 100%; min-height: 150px; font-size: 0.9rem; color: #1E3F5A; box-sizing: border-box; resize: none;"></textarea>
+                                </div>
+                                <button type="submit" class="overlay-btn" id="wish-submit" style="width: 100%; margin-top: 15px; padding: 14px; flex: none;">
+                                    <span class="btn-text" data-i18n="submit_wish">Gửi Lời Chúc</span>
+                                    <span class="loader hidden"></span>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            </div>
+        </section>
+
+
+        <!-- Location Section -->
+        <section id="location-section" style="padding: 100px 20px; position: relative; display: flex; flex-direction: column; align-items: center; text-align: center;">
+            <svg class="floral-corner top-left reveal-left" viewBox="0 0 100 100" fill="currentColor" style="position: absolute; top: 20px; left: 20px; width: 60px; color: var(--color-gold);">
+                <path d="M0,0 Q50,0 50,50 T100,100 M0,20 Q30,20 30,50 T80,100 M20,0 Q20,30 50,30 T100,80" stroke="currentColor" stroke-width="2" fill="none" opacity="0.5"/>
+            </svg>
+            <svg class="floral-corner bottom-right reveal-right" viewBox="0 0 100 100" fill="currentColor" style="position: absolute; bottom: 20px; right: 20px; width: 60px; color: var(--color-gold); transform: rotate(180deg);">
+                <path d="M0,0 Q50,0 50,50 T100,100 M0,20 Q30,20 30,50 T80,100 M20,0 Q20,30 50,30 T100,80" stroke="currentColor" stroke-width="2" fill="none" opacity="0.5"/>
+            </svg>
+            <div class="reveal" style="height:1px; background: var(--gold-line); max-width:280px; width:100%; margin: 0 auto 40px;"></div>
+            <h2 class="luxury-section-title reveal reveal-delay-1" style="margin-bottom:10px;" data-i18n="nav_location">Địa Điểm Tổ Chức</h2>
+            <span class="luxury-section-ornament reveal reveal-delay-2">✦ ✦ ✦</span>
+            <div class="map-container reveal-scale reveal-delay-3" style="width: 100%; max-width: 900px; height: 450px; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-deep); border: 3px solid var(--color-bg);"> 
+                <iframe src="https://maps.google.com/maps?q=Tan%20Son%20Nhat%20Pavillon,%20202%20Hoang%20Van%20Thu,%20Phu%20Nhuan&t=&z=16&ie=UTF8&iwloc=&output=embed" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+            <h3 class="reveal reveal-delay-4" data-i18n="location_name" style="margin-top: 40px; font-family: var(--font-heading); color: var(--color-text); font-size: 1.5rem; line-height: 1.5; font-style: italic; font-weight: 400;">Sảnh Grand Diamond - Tầng 4<br>Nhà hàng Pavillon Tân Sơn Nhất</h3>
+            <p class="reveal reveal-delay-5" data-i18n="location_address" style="margin-top: 10px; font-size: 0.9rem; color: var(--color-text-mid); letter-spacing: 2px;">202 Hoàng Văn Thụ, Phường 9, Phú Nhuận, TPHCM</p>
+        </section>
+
+
+        <!-- Join Us For News Section -->
+        <section id="news-section" style="padding: 100px 20px; position: relative; display: flex; justify-content: center; align-items: center; background: var(--color-bg2);">
+            <div class="reveal-scale" style="width: 100%; max-width: 600px; background: #fff; padding: 50px 30px; border-radius: 12px; box-shadow: var(--shadow-deep); border: 1px solid var(--color-border); text-align: center;">
+                <h2 data-i18n="news_title" style="font-family: var(--font-heading); color: var(--color-gold); font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 10px; font-weight:400; font-style:italic;">Cộng Đồng</h2>
+                <span style="color: var(--color-gold); font-size:0.8rem; letter-spacing:10px; display:block; margin-bottom:20px;">✦ ✦ ✦</span>
+                <p data-i18n="news_desc" style="font-size: 0.95rem; color: var(--color-text-mid); line-height: 1.8; margin-bottom: 30px;">Quét mã QR dưới đây để tham gia nhóm cập nhật những thông tin và hình ảnh mới nhất về đám cưới của chúng mình nhé!</p>
+                <img src="assets/qr.png" alt="Group QR Code" style="width: 250px; height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid var(--color-border); padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); background: #fff;">
+            </div>
+        </section>
+
+        <!-- RSVP Standalone Section -->
+        <section id="rsvp-section" style="padding: 100px 20px; position: relative; display: flex; justify-content: center; align-items: center;">
+            <div class="reveal-scale" style="width: 100%; max-width: 760px; background: var(--color-bg); padding: 60px 50px; border-radius: 8px; box-shadow: var(--shadow-deep); border: 1px solid var(--color-border); text-align: center; position: relative;">
+                
+                <!-- RSVP Form State -->
+                <div id="rsvp-form-state">
+                    <div style="height:1px; background: var(--gold-line); max-width:200px; width:100%; margin: 0 auto 40px;"></div>
+                    <h2 data-i18n="rsvp_title" style="font-family: var(--font-heading); color: var(--color-gold); font-size: 2.2rem; letter-spacing: 2px; margin-bottom: 10px; font-weight:400; font-style:italic;">Phúc Đáp</h2>
+                    <span style="color: var(--color-gold); font-size:0.8rem; letter-spacing:10px; display:block; margin-bottom:30px;">✦ ✦ ✦</span>
+                    
+                    <p data-i18n="rsvp_desc" style="font-size: 0.95rem; color: var(--color-text-mid); line-height: 1.9; margin-bottom: 40px; font-style: italic;">Sự hiện diện của Quý khách là niềm vinh hạnh cho gia đình chúng tôi.<br>Kính mong Quý khách vui lòng xác nhận tham dự để gia đình tiếp đón được chu đáo nhất.</p>
+                    
+                    <form id="rsvp-form" class="elegant-form" style="max-width: 500px; margin: 0 auto; text-align: left;">
+                        <div class="form-group radio-group" style="gap: 20px; margin-bottom: 30px;">
+                            <label class="radio-label" style="font-size: clamp(0.9rem, 3.5vw, 1.1rem); color: #333; white-space: nowrap;">
+                                <input type="radio" name="isAttending" value="true" required>
+                                <span class="radio-custom" style="width: 20px; height: 20px;"></span> 
+                                <span data-i18n="will_attend">Sắp xếp tham dự</span>
+                            </label>
+                            <label class="radio-label" style="font-size: clamp(0.9rem, 3.5vw, 1.1rem); color: #333; white-space: nowrap;">
+                                <input type="radio" name="isAttending" value="false" required>
+                                <span class="radio-custom" style="width: 20px; height: 20px;"></span> 
+                                <span data-i18n="will_not_attend">Rất tiếc chưa thể tham dự</span>
+                            </label>
+                        </div>
+
+                        <div class="form-group" id="absence-reason-group" style="margin-bottom: 40px; display: none;">
+                            <label for="absenceReason" data-i18n="absence_reason" style="font-size: 1rem; color: #444; margin-bottom: 15px;">Xin lý do vắng mặt (tuỳ chọn):</label>
+                            <textarea id="absenceReason" name="absenceReason" class="elegant-input" style="font-size: 1rem; padding: 12px 0; height: 80px;" data-i18n-placeholder="absence_placeholder" placeholder="Nhập lý do..."></textarea>
+                        </div>
+                        <button type="submit" class="elegant-btn" id="rsvp-submit" style="background: #1E3F5A; color: #fff; padding: 18px; border-radius: 8px; font-size: 1.1rem; letter-spacing: 2px;">
+                            <span class="btn-text" data-i18n="submit_rsvp">Gửi Phản Hồi</span>
+                            <span class="loader hidden"></span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- RSVP Confirmation State (hidden initially) -->
+                <div id="rsvp-confirmation-state" class="hidden" style="padding: 20px 0;">
+                    <div id="rsvp-confirm-icon" style="width: 90px; height: 90px; border-radius: 50%; margin: 0 auto 30px auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; transition: all 0.5s ease;">
+                    </div>
+                    <h2 id="rsvp-confirm-title" style="font-family: var(--font-heading); color: #1E3F5A; font-size: 2rem; letter-spacing: 2px; margin-bottom: 20px;"></h2>
+                    <div style="width: 60px; height: 1px; background: #a7c787; margin: 0 auto 25px auto;"></div>
+                    <p id="rsvp-confirm-message" style="font-size: 1.05rem; color: #555; line-height: 1.9; font-style: italic; max-width: 500px; margin: 0 auto;"></p>
+                </div>
+
+            </div>
+        </section>
+        
+        <footer style="text-align: center; padding: 40px; background: #111; color: #555; font-size: 0.9rem;">
+            &copy; 2026 Cong Minh & Van Anh. Built with love.
+        </footer>
+    </div>
+
+    <!-- Phase 4: Mailbox Animation Container -->
+    <div id="mailbox-container" class="mailbox-container hidden">
+        <svg viewBox="0 0 100 100" class="mailbox-svg">
+            <rect x="45" y="70" width="10" height="30" fill="#333" />
+            <path d="M 20 70 L 80 70 L 80 40 A 30 30 0 0 0 20 40 Z" fill="#222" stroke="#555" stroke-width="2"/>
+            <rect x="25" y="55" width="50" height="5" fill="#111" rx="2" id="mailbox-slot" />
+            <path d="M 75 45 L 85 45 L 85 60 L 75 60 Z" fill="#666" id="mailbox-flag" />
+        </svg>
+    </div>
+
+
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/MotionPathPlugin.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+    <script src="js/app.js?v=9"></script>
+</body>
+</html>

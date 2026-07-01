@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Host Portal - Tạo Link Khách Mời</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background-color: #FDFBF7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .host-container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .top-section {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        
+        @media (max-width: 768px) {
+            .top-section {
+                flex-direction: column;
+            }
+        }
+        
+        .form-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        .stats-section {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: stretch;
+        }
+        .stat-card {
+            background: #F4F8FB;
+            border: 1px solid #E1E8ED;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+        }
+        .stat-card h3 {
+            margin: 0 0 10px 0;
+            color: #555;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .stat-card .stat-number {
+            font-family: var(--font-heading);
+            font-size: 3rem;
+            color: #1E3F5A;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .host-title {
+            font-family: var(--font-heading);
+            color: #1E3F5A;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .guest-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-family: var(--font-body);
+            transition: border-color 0.3s;
+        }
+        .guest-input:focus {
+            outline: none;
+            border-color: #1E3F5A;
+        }
+        .btn-generate {
+            width: 100%;
+            padding: 12px;
+            background-color: #1E3F5A;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: background 0.3s;
+        }
+        .btn-generate:hover {
+            background-color: #122638;
+        }
+        
+        .result-box {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            display: none;
+        }
+        .result-box.active {
+            display: block;
+        }
+        .generated-link {
+            word-break: break-all;
+            margin: 15px 0;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        .btn-copy {
+            background-color: #dcedc8;
+            color: #2E4C7E;
+            border: 1px solid #c8e6c9;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .btn-copy:hover {
+            background-color: #c8e6c9;
+        }
+        
+        .history-section {
+            margin-top: 40px;
+            text-align: left;
+        }
+        .history-section h4 {
+            font-family: var(--font-heading);
+            color: #1E3F5A;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .history-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .history-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-name {
+            font-weight: bold;
+            color: #333;
+        }
+        .history-actions button {
+            background: none;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 5px;
+        }
+        .history-actions button:hover {
+            background: #eee;
+        }
+        .data-grid-section {
+            margin-top: 20px;
+            overflow-x: auto;
+        }
+        .data-grid-section h3 {
+            font-family: var(--font-heading);
+            color: #1E3F5A;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            text-align: left;
+        }
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .data-table th {
+            background-color: #F8FAFC;
+            color: #1E3F5A;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .data-table tr:hover {
+            background-color: #F8FAFC;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-attending { background: #dcedc8; color: #2E7D32; }
+        .status-not-attending { background: #ffcdd2; color: #c62828; }
+        .status-pending { background: #f5f5f5; color: #757575; }
+        
+        .wish-cell {
+            max-width: 300px;
+            white-space: pre-wrap;
+            color: #555;
+            font-style: italic;
+        }
+        
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #FDFBF7; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; z-index: 9999;
+        }
+        .login-card {
+            background: #fff; padding: 40px; border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(30,63,90,0.08); text-align: center;
+            width: 100%; max-width: 400px;
+        }
+        .login-card h2 { font-family: var(--font-heading); color: #1E3F5A; margin-bottom: 30px; font-size: 2rem; }
+        .login-card .input-group { margin-bottom: 20px; text-align: left; }
+        .login-card .guest-input { background: #fdfdfd; }
+        #hostDashboard { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="loginOverlay">
+        <div class="login-card">
+            <h2>Host Portal</h2>
+            <div class="input-group">
+                <label for="hostUsername">Tên đăng nhập</label>
+                <input type="text" id="hostUsername" class="guest-input" placeholder="Nhập tên đăng nhập...">
+            </div>
+            <div class="input-group">
+                <label for="hostPassword">Mật khẩu</label>
+                <input type="password" id="hostPassword" class="guest-input" placeholder="Nhập mật khẩu...">
+            </div>
+            <button id="loginBtn" class="btn-generate" style="margin-top: 10px;">Đăng Nhập</button>
+            <p id="loginError" style="color: #c62828; display: none; margin-top: 20px; font-size: 0.9rem;">Tài khoản hoặc mật khẩu không đúng!</p>
+        </div>
+    </div>
+
+    <div class="host-container" id="hostDashboard">
+        
+        <div class="top-section">
+            <div class="form-section">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
+                    <h1 class="host-title" style="margin-bottom: 0;">Host Portal</h1>
+                    <button id="logoutBtn" style="background: none; border: 1px solid #ccc; color: #888; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; white-space: nowrap;">&#x2192; Đăng xuất</button>
+                </div>
+                <p style="color: #666; margin-bottom: 30px;">Tạo đường link riêng biệt cho từng khách mời</p>
+                
+                <div class="input-group">
+                    <label for="guestNameInput">Tên Khách Mời (Hiển thị trên bìa thiệp)</label>
+                    <input type="text" id="guestNameInput" class="guest-input" placeholder="VD: Vợ chồng anh Nam...">
+                </div>
+                
+                <button id="generateBtn" class="btn-generate">Tạo Link Thiệp Cưới</button>
+                
+                <div id="resultBox" class="result-box">
+                    <h4 style="margin-top: 0; color: #1E3F5A;">Đã tạo link thành công!</h4>
+                    <div id="generatedLink" class="generated-link">https://.../?guestname=...</div>
+                    <button id="copyBtn" class="btn-copy">📋 Copy Link</button>
+                    <span id="copyFeedback" style="color: green; margin-left: 10px; font-size: 0.8rem; display: none;">Đã copy!</span>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <div class="stat-card">
+                    <h3>Đã xác nhận<br>tham dự</h3>
+                    <p class="stat-number" id="totalGuestsCount">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Số link<br>đã tạo</h3>
+                    <p class="stat-number" id="totalLinksCount">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="data-grid-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;">Danh sách Khách Mời</h3>
+            </div>
+            <table class="data-table" id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Tên Khách Mời</th>
+                        <th>Trạng Thái</th>
+                        <th>SL</th>
+                        <th>Lời Chúc</th>
+                        <th>Người Tạo</th>
+                        <th>Thời Gian Tạo</th>
+                        <th>Link Thiệp</th>
+                        <th>Hành Động</th>
+                    </tr>
+                </thead>
+                <tbody id="dataGridBody">
+                    <tr><td colspan="6" style="text-align: center; color: #999;">Đang tải dữ liệu...</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+
+    <!-- Cảnh báo Toast dùng chung css/style.css -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/host.js"></script>
+</body>
+</html>
