@@ -14,8 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
             seal_text: "Mời",
             wedding_title: "Lễ Thành Hôn",
             cordially_invited: "Trân trọng kính mời",
-            location_name: "Sảnh Grand Diamond - Tầng 4\nNhà hàng Pavillon Tân Sơn Nhất",
-            location_address: "202 Hoàng Văn Thụ, Phường 9, Phú Nhuận, TPHCM",
+            location_name: "Nhà hàng Pavillon Tân Sơn Nhất",
+            location_address: "202 Hoàng Văn Thụ, Phường Đức Nhuận, TPHCM",
             date_text: "18:00 · Chủ Nhật · 18/10/2026",
             news_title: "Nhóm Cập Nhật Thông Tin",
             news_desc: "Quét mã QR dưới đây để tham gia nhóm Facebook cập nhật những thông tin và hình ảnh mới nhất về đám cưới  nhé!",
@@ -77,8 +77,8 @@ document.addEventListener('DOMContentLoaded', () => {
             seal_text: "Invite",
             wedding_title: "Wedding Ceremony",
             cordially_invited: "Cordially Invited",
-            location_name: "Grand Diamond Hall - 4th Floor\nTan Son Nhat Pavillon",
-            location_address: "202 Hoang Van Thu St, Ward 9, Phu Nhuan Dist, HCMC",
+            location_name: "Tan Son Nhat Pavillon",
+            location_address: "202 Hoang Van Thu, Duc Nhuan Ward, HCMC",
             date_text: "18:00 · Sunday, Oct 18, 2026",
             news_title: "Join Us For News",
             news_desc: "Scan the QR code below to join our Facebook group for the latest updates and photos of our wedding!",
@@ -131,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     let currentLang = localStorage.getItem('lang') || 'vi';
+    let rsvpAttendingState = null; // null = not yet answered, true = attending, false = declining
 
     // Fallback getter since guestName might not be in URL or change based on lang
     let parsedGuestName = new URLSearchParams(window.location.search).get('guestname');
@@ -168,6 +169,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Document title
         document.title = translations[lang].page_title;
+
+        // Show/hide Báo Hỷ section and its nav dot based on language
+        const baohySection = document.getElementById('baohy-section');
+        const baohyDot = document.querySelector('.dot-item[data-section="baohy-section"]');
+        if (baohySection) baohySection.style.display = (lang === 'en') ? 'none' : '';
+        if (baohyDot) baohyDot.style.display = (lang === 'en') ? 'none' : '';
+
+        // Re-apply RSVP confirmation text if already answered
+        if (rsvpAttendingState !== null) {
+            const confirmTitle = document.getElementById('rsvp-confirm-title');
+            const confirmMsg   = document.getElementById('rsvp-confirm-message');
+            if (confirmTitle && confirmMsg) {
+                if (rsvpAttendingState === true) {
+                    confirmTitle.textContent = translations[lang].rsvp_confirm_attend_title;
+                    confirmMsg.textContent   = translations[lang].rsvp_confirm_attend_msg;
+                } else {
+                    confirmTitle.textContent = translations[lang].rsvp_confirm_decline_title;
+                    confirmMsg.textContent   = translations[lang].rsvp_confirm_decline_msg;
+                }
+            }
+        }
+
+        // Re-apply live wishes ticker header
+        const wishesHeader = document.getElementById('live-wishes-header');
+        if (wishesHeader) wishesHeader.textContent = translations[lang].ticker_title || (lang === 'vi' ? 'Lời Chúc Từ Khách Mời' : 'Messages From Guests');
     };
 
     // Attach Lang events
@@ -195,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         confirmState.classList.remove('hidden');
                         confirmState.style.display = 'block'; // Reset in case it was modified
                         if (data.data && data.data.isAttending) {
+                            rsvpAttendingState = true;
                             confirmIcon.innerHTML = '✓';
                             confirmIcon.style.background = 'linear-gradient(135deg, #1E3F5A, #2e6b9e)';
                             confirmIcon.style.color = '#fff';
@@ -202,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             confirmTitle.textContent = translations[currentLang].rsvp_confirm_attend_title;
                             confirmMsg.textContent = translations[currentLang].rsvp_confirm_attend_msg;
                         } else {
+                            rsvpAttendingState = false;
                             confirmIcon.innerHTML = '♡';
                             confirmIcon.style.background = 'linear-gradient(135deg, #688f43, #a7c787)';
                             confirmIcon.style.color = '#fff';
@@ -750,6 +778,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const confirmMsg = document.getElementById('rsvp-confirm-message');
 
                 if (isAttending) {
+                    rsvpAttendingState = true;
                     confirmIcon.innerHTML = '✓';
                     confirmIcon.style.background = 'linear-gradient(135deg, #1E3F5A, #2e6b9e)';
                     confirmIcon.style.color = '#fff';
@@ -757,6 +786,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     confirmTitle.textContent = translations[currentLang].rsvp_confirm_attend_title;
                     confirmMsg.textContent = translations[currentLang].rsvp_confirm_attend_msg;
                 } else {
+                    rsvpAttendingState = false;
                     confirmIcon.innerHTML = '♡';
                     confirmIcon.style.background = 'linear-gradient(135deg, #688f43, #a7c787)';
                     confirmIcon.style.color = '#fff';
@@ -912,5 +942,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     generateParticles();
+
+
+
+    // --- Image Protection ---
+    // Prevent right-click and drag
+    document.addEventListener('contextmenu', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    document.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.preventDefault();
+            return false;
+        }
+    });
 
 });

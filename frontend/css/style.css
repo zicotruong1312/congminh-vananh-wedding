@@ -1073,6 +1073,14 @@ html, body {
         max-width: 380px !important;
         height: 560px !important;
     }
+    /* --- Live Wishes Ticker Fix --- */
+    .live-wishes-container {
+        width: calc(100% - 40px) !important;
+        left: 20px !important;
+        bottom: 20px !important;
+        max-width: 380px;
+    }
+    
     #cards-container {
         gap: 30px !important;
         padding: 20px 16px !important;

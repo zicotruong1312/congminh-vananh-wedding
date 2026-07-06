@@ -6,8 +6,6 @@ node_modules/
 *.env
 
 # Large binary/media files
-backend/raw_images/
-backend/thumbnails/
 backend/thumbnails.zip
 
 # OS files

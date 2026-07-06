@@ -41,7 +41,8 @@ app.get('/api/gallery', (req, res) => {
         // Only serve JPG/JPEG wedding photos - exclude all PNGs (baohy, qr, etc.)
         const imagesData = files.filter(file => {
             const ext = path.extname(file).toLowerCase();
-            return ext === '.jpg' || ext === '.jpeg';
+            const isJpg = ext === '.jpg' || ext === '.jpeg';
+            return isJpg && file !== 'hero_bg.jpg';
         }).map(file => {
             try {
                 const buffer = fs.readFileSync(path.join(galleryPath, file));
