@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toast_wish_success: "Gửi lời chúc thành công!",
             toast_error: "Có lỗi xảy ra",
             toast_server_error: "Lỗi kết nối máy chủ",
-            card_image: "<img src=\"./assets/cards/card_vn.png\" alt=\"Thiệp cưới\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">",
+            card_image: "<img src=\"/gallery/VNI.png\" alt=\"Thiệp cưới\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">",
             open_map_btn: "Bản Đồ 📍",
             invite_guest: "TRÂN TRỌNG KÍNH MỜI",
             scroll_to_explore: "Cuộn để khám phá",
@@ -63,7 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
             tl_3: "Khai tiệc",
             tl_4: "Hát hò · Nhảy múa",
             tl_5: "Kế nhiệm hoa cưới ^^",
-            tl_6: "Kết thúc tiệc"
+            tl_6: "Kết thúc tiệc",
+            dresscode_title: "Dress Code",
+            color_yellow: "Vàng",
+            color_brown: "Nâu",
+            color_black: "Đen",
+            color_green: "Xanh lá",
+            color_white: "Trắng"
         },
         en: {
             page_title: "Wedding Invitation - Cong Minh & Van Anh",
@@ -106,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toast_wish_success: "Wish sent successfully!",
             toast_error: "An error occurred",
             toast_server_error: "Server connection error",
-            card_image: "<img src=\"./assets/cards/card_en.png\" alt=\"Wedding Invitation\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">",
+            card_image: "<img src=\"/gallery/ENG.png\" alt=\"Wedding Invitation\" style=\"width: 100%; height: 100%; object-fit: cover; border-radius: 4px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">",
             open_map_btn: "Map 📍",
             invite_guest: "CORDIALLY INVITES",
             scroll_to_explore: "Scroll to explore",
@@ -126,7 +132,13 @@ document.addEventListener('DOMContentLoaded', () => {
             tl_3: "Banquet Starts",
             tl_4: "Singing & Dancing",
             tl_5: "Bouquet Toss",
-            tl_6: "Party Ends"
+            tl_6: "Party Ends",
+            dresscode_title: "Dress Code",
+            color_yellow: "Yellow",
+            color_brown: "Brown",
+            color_black: "Black",
+            color_green: "Green",
+            color_white: "White"
         }
     };
 
