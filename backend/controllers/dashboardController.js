@@ -96,9 +96,26 @@ const validateGuest = async (req, res) => {
   }
 };
 
+const deleteWish = async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ success: false, message: 'Thiếu ID lời chúc' });
+    }
+    
+    await WishModel.findByIdAndDelete(id);
+    
+    res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công' });
+  } catch (error) {
+    console.error('Delete Wish Error:', error);
+    res.status(500).json({ success: false, message: 'Lỗi server khi xóa lời chúc' });
+  }
+};
+
 module.exports = {
   getDashboardData,
   saveGuestLink,
   deleteGuest,
-  validateGuest
+  validateGuest,
+  deleteWish
 };

@@ -1,49 +1,58 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wedding Host Portal - Tạo Link Khách Mời</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Công Minh & Vân Anh Wedding</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Lato:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <style>
         body {
-            background-color: #FDFBF7;
+            background-color: var(--color-bg);
+            background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="n"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23n)" opacity="0.025"/%3E%3C/svg%3E');
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            color: var(--color-text);
         }
+
         .host-container {
-            background: #fff;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            box-shadow: var(--shadow-deep);
+            border: 1px solid var(--color-border);
             width: 100%;
             max-width: 1100px;
             display: flex;
             flex-direction: column;
             gap: 30px;
         }
-        
+
         .top-section {
             display: flex;
             gap: 40px;
             align-items: flex-start;
         }
-        
+
         @media (max-width: 768px) {
             .top-section {
                 flex-direction: column;
             }
         }
-        
+
         .form-section {
             flex: 1;
             min-width: 300px;
         }
+
         .stats-section {
             flex: 1;
             display: flex;
@@ -51,38 +60,43 @@
             justify-content: center;
             align-items: stretch;
         }
+
         .stat-card {
-            background: #F4F8FB;
-            border: 1px solid #E1E8ED;
+            background: var(--color-bg2);
+            border: 1px solid var(--color-border);
             border-radius: 8px;
             padding: 20px;
             text-align: center;
             flex: 1;
         }
+
         .stat-card h3 {
             margin: 0 0 10px 0;
-            color: #555;
+            color: var(--color-text-mid);
             font-size: 0.9rem;
             text-transform: uppercase;
         }
+
         .stat-card .stat-number {
             font-family: var(--font-heading);
             font-size: 3rem;
-            color: #1E3F5A;
+            color: var(--color-gold);
             margin: 0;
             line-height: 1;
         }
 
         .host-title {
             font-family: var(--font-heading);
-            color: #1E3F5A;
+            color: var(--color-gold);
             margin-bottom: 20px;
             font-size: 2rem;
         }
+
         .input-group {
             margin-bottom: 20px;
             text-align: left;
         }
+
         .input-group label {
             display: block;
             margin-bottom: 8px;
@@ -91,6 +105,7 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
         .guest-input {
             width: 100%;
             padding: 12px 15px;
@@ -100,14 +115,16 @@
             font-family: var(--font-body);
             transition: border-color 0.3s;
         }
+
         .guest-input:focus {
             outline: none;
             border-color: #1E3F5A;
         }
+
         .btn-generate {
             width: 100%;
             padding: 12px;
-            background-color: #1E3F5A;
+            background-color: var(--color-gold);
             color: white;
             border: none;
             border-radius: 6px;
@@ -117,10 +134,11 @@
             letter-spacing: 2px;
             transition: background 0.3s;
         }
+
         .btn-generate:hover {
-            background-color: #122638;
+            background-color: var(--color-gold2);
         }
-        
+
         .result-box {
             margin-top: 30px;
             padding: 20px;
@@ -129,9 +147,11 @@
             border-radius: 8px;
             display: none;
         }
+
         .result-box.active {
             display: block;
         }
+
         .generated-link {
             word-break: break-all;
             margin: 15px 0;
@@ -142,6 +162,7 @@
             color: #333;
             font-size: 0.9rem;
         }
+
         .btn-copy {
             background-color: #dcedc8;
             color: #2E4C7E;
@@ -151,21 +172,24 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .btn-copy:hover {
             background-color: #c8e6c9;
         }
-        
+
         .history-section {
             margin-top: 40px;
             text-align: left;
         }
+
         .history-section h4 {
             font-family: var(--font-heading);
-            color: #1E3F5A;
+            color: var(--color-gold);
             border-bottom: 1px solid #eee;
             padding-bottom: 10px;
             margin-bottom: 15px;
         }
+
         .history-list {
             list-style: none;
             padding: 0;
@@ -173,6 +197,7 @@
             max-height: 250px;
             overflow-y: auto;
         }
+
         .history-list li {
             padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
@@ -180,10 +205,12 @@
             justify-content: space-between;
             align-items: center;
         }
+
         .history-name {
             font-weight: bold;
             color: #333;
         }
+
         .history-actions button {
             background: none;
             border: 1px solid #ccc;
@@ -193,41 +220,50 @@
             font-size: 0.8rem;
             margin-left: 5px;
         }
+
         .history-actions button:hover {
             background: #eee;
         }
+
         .data-grid-section {
             margin-top: 20px;
             overflow-x: auto;
         }
+
         .data-grid-section h3 {
             font-family: var(--font-heading);
-            color: #1E3F5A;
+            color: var(--color-gold);
             font-size: 1.5rem;
             margin-bottom: 15px;
         }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
             text-align: left;
         }
-        .data-table th, .data-table td {
+
+        .data-table th,
+        .data-table td {
             padding: 12px 15px;
             border-bottom: 1px solid #eee;
         }
+
         .data-table th {
-            background-color: #F8FAFC;
-            color: #1E3F5A;
+            background-color: var(--color-bg2);
+            color: var(--color-gold);
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
             font-size: 0.8rem;
             white-space: nowrap;
         }
+
         .data-table tr:hover {
             background-color: #F8FAFC;
         }
+
         .status-badge {
             display: inline-block;
             padding: 4px 10px;
@@ -236,38 +272,317 @@
             font-weight: bold;
             text-transform: uppercase;
         }
-        .status-attending { background: #dcedc8; color: #2E7D32; }
-        .status-not-attending { background: #ffcdd2; color: #c62828; }
-        .status-pending { background: #f5f5f5; color: #757575; }
-        
+
+        .status-attending {
+            background: #dcedc8;
+            color: #2E7D32;
+        }
+
+        .status-not-attending {
+            background: #ffcdd2;
+            color: #c62828;
+        }
+
+        .status-pending {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
         .wish-cell {
             max-width: 300px;
             white-space: pre-wrap;
             color: #555;
             font-style: italic;
         }
-        
+
         #loginOverlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #FDFBF7; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 9999;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--color-bg);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
         }
+
         .login-card {
-            background: #fff; padding: 40px; border-radius: 12px;
-            box-shadow: 0 15px 50px rgba(30,63,90,0.08); text-align: center;
-            width: 100%; max-width: 400px;
+            background: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 15px 50px rgba(104, 143, 67, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid var(--color-border);
         }
-        .login-card h2 { font-family: var(--font-heading); color: #1E3F5A; margin-bottom: 30px; font-size: 2rem; }
-        .login-card .input-group { margin-bottom: 20px; text-align: left; }
-        .login-card .guest-input { background: #fdfdfd; }
-        #hostDashboard { display: none; }
+
+        .login-card h2 {
+            font-family: var(--font-heading);
+            color: var(--color-gold);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .login-card .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .login-card .guest-input {
+            background: #fdfdfd;
+        }
+
+        #hostDashboard {
+            display: none;
+            flex-direction: column;
+        }
+
+        .host-navbar {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #eee;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            color: #555;
+            transition: all 0.3s;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .nav-tab:hover {
+            background: var(--color-bg2);
+        }
+
+        .nav-tab.active {
+            background: var(--color-gold);
+            color: white;
+            font-weight: bold;
+        }
+
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            aspect-ratio: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .gallery-item .delete-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(198, 40, 40, 0.8);
+            color: white;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        .gallery-item .delete-btn:hover {
+            background: rgba(198, 40, 40, 1);
+        }
+
+        .upload-section {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        .custom-file-upload {
+            border: 2px dashed var(--color-gold);
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 8px;
+            color: var(--color-gold);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(104, 143, 67, 0.03);
+        }
+
+        .custom-file-upload:hover {
+            background: rgba(104, 143, 67, 0.1);
+            border-color: var(--color-gold2);
+            color: var(--color-gold2);
+        }
+
+        .file-input {
+            border: 1px solid #ccc;
+            padding: 5px;
+            border-radius: 4px;
+            background: white;
+        }
+
+        /* Image Modal */
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+        }
+
+        #imageModal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            object-fit: contain;
+        }
+
+        #imageModal .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        #imageModal .close-modal:hover {
+            color: #ccc;
+        }
+
+        /* Selectable items */
+        .gallery-item.selectable::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            pointer-events: none;
+            box-sizing: border-box;
+            border: 3px solid transparent;
+        }
+
+        .gallery-item.selected::after {
+            border-color: #c62828;
+            background: rgba(198, 40, 40, 0.3);
+        }
+
+        .wish-row.selectable {
+            cursor: pointer;
+        }
+
+        .wish-row.selected {
+            background-color: #ffebee !important;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        .btn-danger {
+            background-color: #c62828;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-heading);
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+        }
+
+        .btn-secondary {
+            background-color: #9e9e9e;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: var(--font-heading);
+        }
+
+        .btn-secondary:hover {
+            background-color: #757575;
+        }
     </style>
 </head>
+
 <body>
+
+    <!-- Image Modal -->
+    <div id="imageModal">
+        <span class="close-modal">&times;</span>
+        <img id="modalImageSrc" src="" alt="Full Image">
+    </div>
 
     <div id="loginOverlay">
         <div class="login-card">
-            <h2>Host Portal</h2>
+            <h2>Công Minh & Vân Anh Wedding</h2>
             <div class="input-group">
                 <label for="hostUsername">Tên đăng nhập</label>
                 <input type="text" id="hostUsername" class="guest-input" placeholder="Nhập tên đăng nhập...">
@@ -277,75 +592,166 @@
                 <input type="password" id="hostPassword" class="guest-input" placeholder="Nhập mật khẩu...">
             </div>
             <button id="loginBtn" class="btn-generate" style="margin-top: 10px;">Đăng Nhập</button>
-            <p id="loginError" style="color: #c62828; display: none; margin-top: 20px; font-size: 0.9rem;">Tài khoản hoặc mật khẩu không đúng!</p>
+            <p id="loginError" style="color: #c62828; display: none; margin-top: 20px; font-size: 0.9rem;">Tài khoản
+                hoặc mật khẩu không đúng!</p>
         </div>
     </div>
 
     <div class="host-container" id="hostDashboard">
-        
-        <div class="top-section">
-            <div class="form-section">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px;">
-                    <h1 class="host-title" style="margin-bottom: 0;">Host Portal</h1>
-                    <button id="logoutBtn" style="background: none; border: 1px solid #ccc; color: #888; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; white-space: nowrap;">&#x2192; Đăng xuất</button>
+
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0px;">
+            <h1 class="host-title" style="margin-bottom: 0;">Công Minh & Vân Anh Wedding</h1>
+            <button id="logoutBtn"
+                style="background: none; border: 1px solid #ccc; color: #888; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; white-space: nowrap;">&#x2192;
+                Đăng xuất</button>
+        </div>
+
+        <div class="host-navbar">
+            <button class="nav-tab active" data-target="tab-links">Tạo Link & Thống Kê</button>
+            <button class="nav-tab" data-target="tab-wishes">Lời Chúc</button>
+            <button class="nav-tab" data-target="tab-gallery">Quản Lý Ảnh</button>
+        </div>
+
+        <!-- TAB 1: TẠO LINK & THỐNG KÊ -->
+        <div id="tab-links" class="tab-content active">
+            <div class="top-section">
+                <div class="form-section">
+                    <p style="color: #666; margin-bottom: 30px; margin-top:0;">Tạo đường link riêng biệt cho từng khách
+                        mời</p>
+
+                    <div class="input-group">
+                        <label for="guestNameInput">Tên Khách Mời (Hiển thị trên bìa thiệp)</label>
+                        <input type="text" id="guestNameInput" class="guest-input"
+                            placeholder="VD: Vợ chồng chị Quỳnh...">
+                    </div>
+
+                    <button id="generateBtn" class="btn-generate">Tạo Link Thiệp Cưới</button>
+
+                    <div id="resultBox" class="result-box">
+                        <h4 style="margin-top: 0; color: #1E3F5A;">Đã tạo link thành công!</h4>
+                        <div id="generatedLink" class="generated-link">https://.../?guestname=...</div>
+                        <button id="copyBtn" class="btn-copy">📋 Copy Link</button>
+                        <span id="copyFeedback"
+                            style="color: green; margin-left: 10px; font-size: 0.8rem; display: none;">Đã copy!</span>
+                    </div>
                 </div>
-                <p style="color: #666; margin-bottom: 30px;">Tạo đường link riêng biệt cho từng khách mời</p>
-                
-                <div class="input-group">
-                    <label for="guestNameInput">Tên Khách Mời (Hiển thị trên bìa thiệp)</label>
-                    <input type="text" id="guestNameInput" class="guest-input" placeholder="VD: Vợ chồng anh Nam...">
-                </div>
-                
-                <button id="generateBtn" class="btn-generate">Tạo Link Thiệp Cưới</button>
-                
-                <div id="resultBox" class="result-box">
-                    <h4 style="margin-top: 0; color: #1E3F5A;">Đã tạo link thành công!</h4>
-                    <div id="generatedLink" class="generated-link">https://.../?guestname=...</div>
-                    <button id="copyBtn" class="btn-copy">📋 Copy Link</button>
-                    <span id="copyFeedback" style="color: green; margin-left: 10px; font-size: 0.8rem; display: none;">Đã copy!</span>
+
+                <div class="stats-section">
+                    <div class="stat-card">
+                        <h3>Đã xác nhận<br>tham dự</h3>
+                        <p class="stat-number" id="totalGuestsCount">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Số link<br>đã tạo</h3>
+                        <p class="stat-number" id="totalLinksCount">0</p>
+                    </div>
                 </div>
             </div>
-            
-            <div class="stats-section">
-                <div class="stat-card">
-                    <h3>Đã xác nhận<br>tham dự</h3>
-                    <p class="stat-number" id="totalGuestsCount">0</p>
+
+            <div class="data-grid-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">Danh sách Khách Mời</h3>
                 </div>
-                <div class="stat-card">
-                    <h3>Số link<br>đã tạo</h3>
-                    <p class="stat-number" id="totalLinksCount">0</p>
+                <table class="data-table" id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>Tên Khách Mời</th>
+                            <th>Trạng Thái</th>
+                            <th>SL</th>
+                            <th>Người Tạo</th>
+                            <th>Thời Gian Tạo</th>
+                            <th>Link Thiệp</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataGridBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: #999;">Đang tải dữ liệu...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- END TAB 1 -->
+        </div>
+
+        <!-- TAB 2: LỜI CHÚC -->
+        <div id="tab-wishes" class="tab-content">
+            <div class="data-grid-section" style="margin-top: 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h3 style="margin: 0;">Danh sách Lời Chúc</h3>
+                </div>
+                <select id="guestWishFilter" class="search-input" style="background-color: #fff; cursor: pointer;">
+                    <option value="">-- Tất cả khách mời --</option>
+                </select>
+
+                <div class="action-bar" id="wishActionBar">
+                    <button id="enterDeleteWishBtn" class="btn-danger">Xóa Lời Chúc</button>
+                    <button id="confirmDeleteWishBtn" class="btn-danger" style="display: none;">Xong (0)</button>
+                    <button id="cancelDeleteWishBtn" class="btn-secondary" style="display: none;">Hủy</button>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table" id="wishesTable">
+                        <thead>
+                            <tr>
+                                <th>Tên Khách Mời</th>
+                                <th>Lời Chúc</th>
+                                <th>Thời Gian</th>
+                            </tr>
+                        </thead>
+                        <tbody id="wishesGridBody">
+                            <tr>
+                                <td colspan="3" style="text-align: center; color: #999;">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
-        
-        <div class="data-grid-section">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="margin: 0;">Danh sách Khách Mời</h3>
+
+        <!-- TAB 3: QUẢN LÝ ẢNH -->
+        <div id="tab-gallery" class="tab-content">
+            <div class="data-grid-section" style="margin-top: 0;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                    <h3 style="margin: 0;">Quản lý Ảnh Gallery</h3>
+                </div>
+
+                <div class="upload-section">
+                    <label for="uploadPhotoInput" class="custom-file-upload">
+                        <span style="margin-right: 8px;">📷</span> Chọn ảnh từ máy tính
+                    </label>
+                    <input type="file" id="uploadPhotoInput" class="file-input"
+                        accept="image/jpeg, image/png, image/webp" style="display: none;" />
+
+                    <span id="fileNameDisplay" style="color: #666; font-size: 0.9rem; font-style: italic; flex: 1;">Chưa
+                        chọn ảnh nào</span>
+
+                    <button id="uploadPhotoBtn" class="btn-generate" style="width: auto; padding: 10px 24px;">Tải Ảnh
+                        Lên</button>
+                    <span id="uploadStatus" style="font-size: 0.9rem; color: #555; display: none;">Đang tải
+                        lên...</span>
+                </div>
+
+                <div class="action-bar" id="galleryActionBar">
+                    <button id="enterDeleteGalleryBtn" class="btn-danger">Xóa Ảnh</button>
+                    <button id="confirmDeleteGalleryBtn" class="btn-danger" style="display: none;">Xong (0)</button>
+                    <button id="cancelDeleteGalleryBtn" class="btn-secondary" style="display: none;">Hủy</button>
+                </div>
+
+                <div id="galleryGrid" class="gallery-grid">
+                    <p style="text-align: center; color: #999; grid-column: 1 / -1;">Đang tải ảnh...</p>
+                </div>
             </div>
-            <table class="data-table" id="dataTable">
-                <thead>
-                    <tr>
-                        <th>Tên Khách Mời</th>
-                        <th>Trạng Thái</th>
-                        <th>SL</th>
-                        <th>Lời Chúc</th>
-                        <th>Người Tạo</th>
-                        <th>Thời Gian Tạo</th>
-                        <th>Link Thiệp</th>
-                        <th>Hành Động</th>
-                    </tr>
-                </thead>
-                <tbody id="dataGridBody">
-                    <tr><td colspan="6" style="text-align: center; color: #999;">Đang tải dữ liệu...</td></tr>
-                </tbody>
-            </table>
         </div>
-        
+
     </div>
 
     <!-- Cảnh báo Toast dùng chung css/style.css -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/host.js"></script>
+    <script src="js/host.js?v=1.1"></script>
 </body>
+
 </html>

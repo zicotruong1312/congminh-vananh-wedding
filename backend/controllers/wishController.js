@@ -9,9 +9,9 @@ const submitWish = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Name and message are required' });
     }
 
-    // Rate Limiting: Max 6 wishes per IP
-    const wishCount = await WishModel.countDocuments({ ipAddress });
-    if (wishCount >= 6) {
+    // Rate Limiting: Max 4 wishes per guestName
+    const wishCount = await WishModel.countDocuments({ guestName: new RegExp(`^${guestName}$`, 'i') });
+    if (wishCount >= 4) {
       return res.status(429).json({ success: false, message: 'Bạn đã gửi tối đa số lời chúc cho phép. Cảm ơn bạn rất nhiều!' });
     }
 

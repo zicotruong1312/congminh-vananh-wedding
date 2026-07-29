@@ -10,6 +10,7 @@ if (typeof sizeOf !== 'function') sizeOf = sizeOf.imageSize || sizeOf.default;
 const rsvpRoutes = require('./routes/rsvpRoutes');
 const wishRoutes = require('./routes/wishRoutes');
 const dashboardRoutes = require('./routes/dashboardRoutes');
+const galleryRoutes = require('./routes/galleryRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/api/rsvp', rsvpRoutes);
 app.use('/api/wishes', wishRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/gallery', galleryRoutes);
 
 // Serve raw_images for gallery and thumbnails
 app.use('/gallery', express.static(path.join(__dirname, 'raw_images')));
