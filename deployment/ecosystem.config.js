@@ -1,10 +1,11 @@
 module.exports = {
   apps: [{
     name: "wedding-invite-api",
-    script: "./backend/server.js",
+    script: "/var/www/wedding/backend/server.js",
+    cwd: "/var/www/wedding",
     instances: 1,
     exec_mode: "fork",
-    env_file: "./backend/.env",
+    env_file: "/var/www/wedding/backend/.env",
     env: {
       NODE_ENV: "production",
       PORT: 3000
