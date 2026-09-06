@@ -7,7 +7,7 @@ let sizeOf = require('image-size');
 if (typeof sizeOf !== 'function') sizeOf = sizeOf.imageSize || sizeOf.default;
 
 // Database
-const { testConnection } = require('./db');
+const { testConnection, query } = require('./db');
 
 // Route imports
 const rsvpRoutes = require('./routes/rsvpRoutes');
@@ -70,10 +70,22 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
+// Keepalive ping: Ping DB every 4 minutes to prevent Supabase free tier from pausing
+const startKeepalive = () => {
+  setInterval(async () => {
+    try {
+      await query('SELECT 1');
+    } catch (err) {
+      console.warn('⚠️ Keepalive ping failed:', err.message);
+    }
+  }, 4 * 60 * 1000); // every 4 minutes
+};
+
 // Start server after verifying DB connection
 const startServer = async () => {
   try {
     await testConnection();
+    startKeepalive();
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);
     });
