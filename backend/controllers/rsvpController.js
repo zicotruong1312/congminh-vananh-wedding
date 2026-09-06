@@ -1,13 +1,19 @@
-const RsvpModel = require('../models/RsvpModel');
+const db = require('../db');
 
 const checkRsvp = async (req, res) => {
   try {
     const { name } = req.query;
     if (!name) return res.json({ success: false, hasRsvp: false });
-    
-    const existing = await RsvpModel.findOne({ guestName: name });
-    if (existing) {
-      return res.json({ success: true, hasRsvp: true, data: existing });
+
+    const result = await db.query(
+      `SELECT id as "_id", guest_name as "guestName", is_attending as "isAttending",
+              guest_count as "guestCount", absence_reason as "absenceReason", created_at as "createdAt"
+       FROM rsvps WHERE guest_name = $1 LIMIT 1`,
+      [name]
+    );
+
+    if (result.rows.length > 0) {
+      return res.json({ success: true, hasRsvp: true, data: result.rows[0] });
     }
     return res.json({ success: true, hasRsvp: false });
   } catch (error) {
@@ -19,25 +25,26 @@ const checkRsvp = async (req, res) => {
 const submitRsvp = async (req, res) => {
   try {
     const { guestName, isAttending, guestCount, absenceReason } = req.body;
-    
+
     if (!guestName || typeof isAttending !== 'boolean') {
       return res.status(400).json({ success: false, message: 'Invalid input data' });
     }
 
     // Check if already RSVP'd
-    const existing = await RsvpModel.findOne({ guestName });
-    if (existing) {
+    const existing = await db.query(
+      'SELECT id FROM rsvps WHERE guest_name = $1 LIMIT 1',
+      [guestName]
+    );
+    if (existing.rows.length > 0) {
       return res.status(400).json({ success: false, message: 'Bạn đã gửi xác nhận tham dự trước đó rồi.' });
     }
 
-    const newRsvp = new RsvpModel({
-      guestName,
-      isAttending,
-      guestCount: guestCount || 1,
-      absenceReason: isAttending ? '' : absenceReason
-    });
+    await db.query(
+      `INSERT INTO rsvps (guest_name, is_attending, guest_count, absence_reason)
+       VALUES ($1, $2, $3, $4)`,
+      [guestName, isAttending, guestCount || 1, isAttending ? '' : (absenceReason || '')]
+    );
 
-    await newRsvp.save();
     res.status(201).json({ success: true, message: 'RSVP saved successfully' });
   } catch (error) {
     console.error('RSVP Error:', error);
@@ -45,7 +52,4 @@ const submitRsvp = async (req, res) => {
   }
 };
 
-module.exports = {
-  submitRsvp,
-  checkRsvp
-};
+module.exports = { submitRsvp, checkRsvp };

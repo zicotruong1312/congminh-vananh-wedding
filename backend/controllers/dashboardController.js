@@ -1,33 +1,39 @@
-const RsvpModel = require('../models/RsvpModel');
-const WishModel = require('../models/WishModel');
-const GuestLinkModel = require('../models/GuestLinkModel');
+const db = require('../db');
 
 const getDashboardData = async (req, res) => {
   try {
-    // Get all RSVPs
-    const rsvps = await RsvpModel.find().sort({ createdAt: -1 });
-    
-    // Calculate total attending guests
-    let totalAttendingGuests = 0;
-    rsvps.forEach(rsvp => {
-      if (rsvp.isAttending) {
-        totalAttendingGuests += rsvp.guestCount;
-      }
-    });
+    // Total attending guests count
+    const totalResult = await db.query(
+      `SELECT COALESCE(SUM(guest_count), 0) as total FROM rsvps WHERE is_attending = true`
+    );
+    const totalAttendingGuests = parseInt(totalResult.rows[0].total) || 0;
 
-    // Get all wishes
-    const wishes = await WishModel.find().sort({ createdAt: -1 });
+    // All RSVPs
+    const rsvpsResult = await db.query(
+      `SELECT id as "_id", guest_name as "guestName", is_attending as "isAttending",
+              guest_count as "guestCount", absence_reason as "absenceReason", created_at as "createdAt"
+       FROM rsvps ORDER BY created_at DESC`
+    );
 
-    // Get all guest links
-    const guestLinks = await GuestLinkModel.find().sort({ createdAt: -1 });
+    // All wishes
+    const wishesResult = await db.query(
+      `SELECT id as "_id", guest_name as "guestName", message, ip_address as "ipAddress", created_at as "createdAt"
+       FROM wishes ORDER BY created_at DESC`
+    );
+
+    // All guest links
+    const linksResult = await db.query(
+      `SELECT id as "_id", guest_name as "guestName", link, created_by as "createdBy", created_at as "createdAt"
+       FROM guest_links ORDER BY created_at DESC`
+    );
 
     res.status(200).json({
       success: true,
       data: {
         totalAttendingGuests,
-        rsvps,
-        wishes,
-        guestLinks
+        rsvps: rsvpsResult.rows,
+        wishes: wishesResult.rows,
+        guestLinks: linksResult.rows
       }
     });
   } catch (error) {
@@ -45,11 +51,13 @@ const saveGuestLink = async (req, res) => {
 
     const creator = createdBy || 'Không rõ';
 
-    // Check if link already exists for this guest - update it if so
-    await GuestLinkModel.findOneAndUpdate(
-      { guestName: { $regex: new RegExp('^' + guestName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i') } },
-      { guestName, link, createdBy: creator, createdAt: new Date() },
-      { upsert: true, new: true }
+    // Upsert: insert or update on conflict (guest_name is UNIQUE)
+    await db.query(
+      `INSERT INTO guest_links (guest_name, link, created_by, created_at)
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (guest_name)
+       DO UPDATE SET link = $2, created_by = $3, created_at = NOW()`,
+      [guestName, link, creator]
     );
 
     res.status(200).json({ success: true });
@@ -65,14 +73,14 @@ const deleteGuest = async (req, res) => {
     if (!guestName) {
       return res.status(400).json({ success: false, message: 'Thiếu tên khách mời' });
     }
-    
-    const query = { guestName: { $regex: new RegExp('^' + guestName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i') } };
-    
-    // Delete RSVP, Wishes AND the guest link record
-    await RsvpModel.deleteMany(query);
-    await WishModel.deleteMany(query);
-    await GuestLinkModel.deleteMany(query);
-    
+
+    const normalizedName = decodeURIComponent(guestName);
+
+    // Delete from all 3 tables (case-insensitive match)
+    await db.query('DELETE FROM rsvps WHERE LOWER(guest_name) = LOWER($1)', [normalizedName]);
+    await db.query('DELETE FROM wishes WHERE LOWER(guest_name) = LOWER($1)', [normalizedName]);
+    await db.query('DELETE FROM guest_links WHERE LOWER(guest_name) = LOWER($1)', [normalizedName]);
+
     res.status(200).json({ success: true, message: 'Đã xóa toàn bộ dữ liệu khách mời thành công' });
   } catch (error) {
     console.error('Delete Guest Error:', error);
@@ -84,12 +92,15 @@ const validateGuest = async (req, res) => {
   try {
     const { guestName } = req.params;
     if (!guestName) {
-      return res.status(400).json({ valid: false });
+      return res.status(200).json({ valid: false });
     }
-    const found = await GuestLinkModel.findOne({
-      guestName: { $regex: new RegExp('^' + guestName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '$', 'i') }
-    });
-    res.status(200).json({ valid: !!found });
+
+    const result = await db.query(
+      'SELECT id FROM guest_links WHERE LOWER(guest_name) = LOWER($1) LIMIT 1',
+      [decodeURIComponent(guestName)]
+    );
+
+    res.status(200).json({ valid: result.rows.length > 0 });
   } catch (error) {
     console.error('Validate Guest Error:', error);
     res.status(500).json({ valid: false });
@@ -102,9 +113,9 @@ const deleteWish = async (req, res) => {
     if (!id) {
       return res.status(400).json({ success: false, message: 'Thiếu ID lời chúc' });
     }
-    
-    await WishModel.findByIdAndDelete(id);
-    
+
+    await db.query('DELETE FROM wishes WHERE id = $1', [id]);
+
     res.status(200).json({ success: true, message: 'Đã xóa lời chúc thành công' });
   } catch (error) {
     console.error('Delete Wish Error:', error);

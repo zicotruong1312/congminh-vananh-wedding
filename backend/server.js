@@ -1,11 +1,14 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 let sizeOf = require('image-size');
 if (typeof sizeOf !== 'function') sizeOf = sizeOf.imageSize || sizeOf.default;
+
+// Database
+const { testConnection } = require('./db');
+
 // Route imports
 const rsvpRoutes = require('./routes/rsvpRoutes');
 const wishRoutes = require('./routes/wishRoutes');
@@ -14,7 +17,6 @@ const galleryRoutes = require('./routes/galleryRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/wedding';
 
 // Middleware
 app.use(cors());
@@ -56,7 +58,6 @@ app.get('/api/gallery', (req, res) => {
                 };
             } catch (e) {
                 console.error(`sizeOf error for ${file}:`, e.message);
-                // Fallback dimensions if reading fails
                 return { name: file, width: 800, height: 1200 };
             }
         });
@@ -64,24 +65,22 @@ app.get('/api/gallery', (req, res) => {
     });
 });
 
-// Fallback for frontend SPA routing if needed (though it's a static site, good practice)
+// Fallback for frontend SPA routing
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-// Database connection
-mongoose.connect(MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => {
-  console.log('Connected to MongoDB');
-})
-.catch((err) => {
-  console.error('Failed to connect to MongoDB', err);
-});
+// Start server after verifying DB connection
+const startServer = async () => {
+  try {
+    await testConnection();
+    app.listen(PORT, () => {
+      console.log(`🚀 Server is running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Failed to connect to database. Server not started.', err.message);
+    process.exit(1);
+  }
+};
 
-// Start server regardless of DB connection (for serving static frontend)
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+startServer();
