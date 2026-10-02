@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             scroll_to_explore: "Cuộn để khám phá",
             nav_home: "Trang Chủ",
             nav_gallery: "Khoảnh Khắc",
-            nav_baohy: "Báo Hỷ",
+            nav_baohy: "Lễ Gia Tiên",
             nav_timeline: "Chương Trình",
             nav_card: "Thiệp Cưới",
             nav_location: "Địa Điểm",
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Document title
         document.title = translations[lang].page_title;
 
-        // Show/hide Báo Hỷ section and its nav dot based on language
+        // Show/hide Lễ Gia Tiên section and its nav dot based on language
         const baohySection = document.getElementById('baohy-section');
         const baohyDot = document.querySelector('.dot-item[data-section="baohy-section"]');
         if (baohySection) baohySection.style.display = (lang === 'en') ? 'none' : '';
